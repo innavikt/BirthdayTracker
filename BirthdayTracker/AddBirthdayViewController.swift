@@ -27,10 +27,35 @@ class AddBirthdayViewController: UIViewController {
     }
 
     @IBAction func saveBirthday(_ sender: UIBarButtonItem) {
-        let firstName = firstNameTextField.text ?? "FirstName Placeholder"
-        let lastName = lastNameTextField.text ?? "LastName Placeholder"
-        let birthdate = birthDayPicker.date
         
+        let firstName = firstNameTextField.text
+        let lastName = lastNameTextField.text
+        
+        if firstName?.isEmpty ?? true, lastName?.isEmpty ?? true {
+            let alert = UIAlertController(title: "Empty Fields",
+                                          message: "Do you want to edit them or cancel saving?",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Cancel",
+                                          style: .cancel,
+                                          handler: { (action) in
+                                            self.dismiss(animated: true, completion: nil)
+                                          }
+            ))
+            alert.addAction(UIAlertAction(title: "Edit",
+                                          style: .cancel,
+                                          handler: nil))
+            self.present(alert, animated: true)
+            
+        } else {
+            
+            let birthdate = birthDayPicker.date
+            save(firstName: firstName, lastName: lastName, birthdate: birthdate)
+            dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    
+    private func save(firstName: String?, lastName: String?, birthdate: Date) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         
@@ -51,9 +76,7 @@ class AddBirthdayViewController: UIViewController {
         }
         
         dismiss(animated: true, completion: nil)
-        
     }
-    
     @IBAction func cancelBirthday(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
     }
