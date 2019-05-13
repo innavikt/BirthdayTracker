@@ -83,23 +83,38 @@ class BirthdayTableViewController: UITableViewController{
     
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if birthdays.count > indexPath.row {
-            let birthday = birthdays[indexPath.row]
-            
-            let appDelegate = UIApplication.shared.delegate as! AppDelegate
-            let context = appDelegate.persistentContainer.viewContext
-            
-            context.delete(birthday)
-            birthdays.remove(at: indexPath.row)
-            
-            do {
-                try context.save()
-            } catch let error {
-                print("Could not save: \(error)")
-            }
-            
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        }
+        
+        let alert = UIAlertController(title: "Are you sure to delete it?",
+                                      message: "You can't go back",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Yes",
+                                      style: .destructive,
+                                      handler: { (alert) in
+                                        if self.birthdays.count > indexPath.row {
+                                            let birthday = self.birthdays[indexPath.row]
+                                            
+                                            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                                            let context = appDelegate.persistentContainer.viewContext
+                                            
+                                            context.delete(birthday)
+                                            self.birthdays.remove(at: indexPath.row)
+                                            
+                                            do {
+                                                try context.save()
+                                            } catch let error {
+                                                print("Could not save: \(error)")
+                                            }
+                                            
+                                            tableView.deleteRows(at: [indexPath], with: .fade)
+                                        }
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Cancel",
+                                      style: .cancel,
+                                      handler: nil))
+        
+        self.present(alert, animated: true)
+        
     }
     
 
